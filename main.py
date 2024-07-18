@@ -1,16 +1,40 @@
-# This is a sample Python script.
+import os
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+import disnake
+from disnake.ext import commands
+from dotenv import load_dotenv
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+load_dotenv()
+TOKEN = os.environ.get("TOKEN")
+GUILD_ID = int(os.environ.get("GUILD_ID"))
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
+bot = commands.Bot(command_prefix="!", intents=disnake.Intents.all())
+bot.remove_command("help")
+
+
+@bot.event
+async def on_ready():
+    print(f"Logged in as {bot.user}")
+    print(f"Bot ID: {bot.user.id}")
+    print(f"Guild ID: {GUILD_ID}")
+    print(f"Total Guilds: {len(bot.guilds)}")
+
+@bot.event
+async def on_disconnect():
+    print("Bot disconnected from Discord")
+
+@bot.event
+async def on_resumed():
+    print("Bot resumed from Discord")
+
+
+if __name__ == "__main__":
+    if TOKEN is None or TOKEN == "":
+        raise ValueError("TOKEN is not set in .env file")
+
+    if GUILD_ID is None or GUILD_ID == "":
+        raise ValueError("GUILD_ID is not set in .env file")
+
+    bot.run(TOKEN)
